@@ -7,7 +7,7 @@ logging:
 
 spring:
   application:
-    name: weibo-subscribe
+    name: weibo-subscribe-public
 #  profiles:
 #    active: dev
   datasource:
