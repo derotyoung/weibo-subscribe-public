@@ -19,7 +19,8 @@ public class HistoryPostRepository extends ServiceImpl<HistoryPostMapper, Histor
     public Map<String, List<HistoryPost>> getPostMapByUserId(String userId) {
         LambdaQueryWrapper<HistoryPost> wrapper = Wrappers.lambdaQuery(HistoryPost.class)
                 .eq(HistoryPost::getUserId, userId)
-                .last("limit 30");
+                .last("limit 20");
+        wrapper.orderByDesc(HistoryPost::getId);
         List<HistoryPost> list = list(wrapper);
         if (CollectionUtils.isEmpty(list)) {
             return Collections.emptyMap();
