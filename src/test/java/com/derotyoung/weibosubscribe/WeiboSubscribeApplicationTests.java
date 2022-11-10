@@ -31,8 +31,8 @@ public class WeiboSubscribeApplicationTests {
     }
 
     // @Test
-    void testWeiboId() {
-        searchService.testWeiboId();
+    void testUserId() {
+        searchService.testWeiboUserId();
     }
 
     // @Test

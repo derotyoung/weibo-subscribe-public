@@ -405,7 +405,7 @@ public class SearchService {
         return "https://weibo.com/" + userId + "/" + bid;
     }
 
-    public void testWeiboId() {
+    public void testWeiboUserId() {
         List<String> userIds = userSubscribeRepository.getAllUserId(false);
         if (CollectionUtils.isEmpty(userIds)) {
             return;
