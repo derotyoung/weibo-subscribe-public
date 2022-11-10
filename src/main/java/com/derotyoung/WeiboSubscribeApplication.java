@@ -40,7 +40,7 @@ public class WeiboSubscribeApplication {
         logger.info("微博订阅启动-{}", LocalDateTime.now(ZoneId.of("UTC+08")));
         Runnable task = () -> {
             logger.info("开始执行查询-{}", LocalDateTime.now(ZoneId.of("UTC+08")));
-            // 00:30 - 06:00 不执行，强制使用东8区时间
+            // 00:30 - 06:00 不执行，强制使用东8区(北京)时间
             LocalTime localTime = LocalTime.now(ZoneId.of("UTC+08"));
             if (localTime.isAfter(LocalTime.of(0, 30))
                     && localTime.isBefore(LocalTime.of(6, 0))) {
@@ -48,7 +48,7 @@ public class WeiboSubscribeApplication {
             }
             searchService.run();
         };
-        // 启动后延时 1 分钟后，按 weibo.subscribe.cyclePeriod分钟 的周期执行任务
+        // 启动后延时 15 秒后，按 weibo.subscribe.cyclePeriod分钟 的周期执行任务
         ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleAtFixedRate(task, 15, (weiboSubscribeProperties.getCyclePeriod() * 60), TimeUnit.SECONDS);
     }
