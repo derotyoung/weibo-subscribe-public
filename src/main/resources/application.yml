@@ -1,0 +1,50 @@
+server:
+  port: 9001
+  shutdown: graceful
+
+logging:
+  config: classpath:log4j2.xml
+
+spring:
+  application:
+    name: weibo-subscribe
+  profiles:
+    active: dev
+  datasource:
+    name: druidDataSource
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/weibo_subscribe?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    druid:
+      #最大连接数
+      max-active: 50
+      #初始化大小
+      initial-size: 5
+      #获取连接最大等待时间
+      max-wait: 60000
+      min-idle: 5
+      #间隔多久检测一次需要关闭的空闲连接 毫秒
+      time-between-eviction-runs-millis: 60000
+      #连接在连接池中最小生存的时间，毫秒
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-open-prepared-statements: 50
+      max-pool-prepared-statement-per-connection-size: 20
+      async-init: true
+      filters: stat
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+---
+weibo:
+  subscribe:
+    telegramChatId: -1001885177644
+    telegramBotToken: 5458704928:AAHBqZFKpu4T8EEGAJFPDT4FNfGqwxoOlGs
+    cyclePeriod: 3
+#    proxy: http://127.0.0.1:7890 #国际网络代理配置，本地运行/调试
