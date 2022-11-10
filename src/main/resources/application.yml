@@ -8,8 +8,8 @@ logging:
 spring:
   application:
     name: weibo-subscribe
-  profiles:
-    active: dev
+#  profiles:
+#    active: dev
   datasource:
     name: druidDataSource
     type: com.alibaba.druid.pool.DruidDataSource
