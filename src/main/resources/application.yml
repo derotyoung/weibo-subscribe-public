@@ -3,7 +3,7 @@ server:
   shutdown: graceful
 
 logging:
-  config: classpath:log4j2.xml
+  config: classpath:log4j2-spring.xml
 
 spring:
   application:
@@ -11,33 +11,24 @@ spring:
 #  profiles:
 #    active: dev
   datasource:
-    name: druidDataSource
-    type: com.alibaba.druid.pool.DruidDataSource
+    name: hikariDataSource
+    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/weibo_subscribe?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
-    druid:
-      #最大连接数
-      max-active: 50
-      #初始化大小
-      initial-size: 5
-      #获取连接最大等待时间
-      max-wait: 60000
-      min-idle: 5
-      #间隔多久检测一次需要关闭的空闲连接 毫秒
-      time-between-eviction-runs-millis: 60000
-      #连接在连接池中最小生存的时间，毫秒
-      min-evictable-idle-time-millis: 300000
-      validation-query: select 'x'
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      pool-prepared-statements: true
-      max-open-prepared-statements: 50
-      max-pool-prepared-statement-per-connection-size: 20
-      async-init: true
-      filters: stat
+    hikari:
+      # 连接池最大连接数
+      maximum-pool-size: 12
+      # 空闲时保持最小连接数
+      minimum-idle: 5
+      # 空闲连接存活时间
+      idle-timeout: 300000
+      # 连接超时时间
+      connection-timeout: 20000
+      # 测试sql
+      connection-test-query: select 'x'
+      max-lifetime: 1200000
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 

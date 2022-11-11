@@ -18,7 +18,6 @@
 		<repackage.classifier/>
 		<mysql-connector-java.version>8.0.28</mysql-connector-java.version>
 		<hutool.version>5.8.9</hutool.version>
-		<druid.version>1.2.14</druid.version>
 		<mybatis.version>2.2.2</mybatis.version>
 		<mybatis-plus.version>3.5.2</mybatis-plus.version>
 		<httpclient.version>4.5.13</httpclient.version>
@@ -36,17 +35,15 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
 		</dependency>
 
 		<dependency>
@@ -55,17 +52,15 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+
 		<!-- database relative -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-
-		<!--自启动Druid管理后台-->
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid-spring-boot-starter</artifactId>
-			<version>${druid.version}</version>
 		</dependency>
 
 		<!-- mybatis-plus -->
