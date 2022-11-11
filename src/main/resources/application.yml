@@ -9,7 +9,7 @@ spring:
   application:
     name: weibo-subscribe-public
 #  profiles:
-#    active: dev
+#    active: dev # not recommend, using ide active profiles
   datasource:
     name: hikariDataSource
     type: com.zaxxer.hikari.HikariDataSource
@@ -18,15 +18,9 @@ spring:
     username: root
     password: 123456
     hikari:
-      # 连接池最大连接数
       maximum-pool-size: 12
-      # 空闲时保持最小连接数
       minimum-idle: 5
-      # 空闲连接存活时间
       idle-timeout: 300000
-      # 连接超时时间
-      connection-timeout: 20000
-      # 测试sql
       connection-test-query: select 'x'
       max-lifetime: 1200000
 mybatis:
@@ -38,4 +32,4 @@ weibo:
     telegramChatId: -1001885177644
     telegramBotToken: 5458704928:AAHBqZFKpu4T8EEGAJFPDT4FNfGqwxoOlGs
     cyclePeriod: 3
-#    proxy: http://127.0.0.1:7890 #国际网络代理配置，本地运行/调试
+#    proxy: http://127.0.0.1:7890 # international network proxy configuration,local run or debug
