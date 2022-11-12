@@ -370,7 +370,8 @@ public class SearchService {
         if (str == null) {
             return null;
         }
-        return str.replace("_", "\\_");
+        return str.replace("_", "\\_")
+                .replace("&gt;", ">");
     }
 
     public String getRetweetText(String text) {
