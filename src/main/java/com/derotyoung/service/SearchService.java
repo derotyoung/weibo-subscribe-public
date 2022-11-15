@@ -87,8 +87,8 @@ public class SearchService {
                     LocalDateTime editAt = parseDate(mblog.getString("edit_at"));
                     if (lastHisPost.getEditAt() == null) {
                         if (editAt == null && lastHisPost.getCreatedAt().equals(createdAt)) {
-                            String nickname = mblog.getJSONObject("user").getString("screen_name");
-                            logger.info("@{}微博文章id={}已经推送过", nickname, id);
+                            // String nickname = mblog.getJSONObject("user").getString("screen_name");
+                            // logger.info("@{}微博文章id={}已经推送过", nickname, id);
                             continue;
                         }
                     } else {
@@ -196,6 +196,7 @@ public class SearchService {
             historyPost.setUserId(weiboPost.getUserId());
             historyPost.setNickname(weiboPost.getNickname());
             historyPost.setPostId(weiboPost.getId());
+            historyPost.setTopFlag(weiboPost.getTopFlag());
             historyPost.setCreatedAt(weiboPost.getCreatedAt());
             historyPost.setEditAt(weiboPost.getEditAt());
             historyPost.setCreateTime(now);
@@ -207,10 +208,23 @@ public class SearchService {
     public WeiboPost getWeiboPost(JSONObject mblog) {
         boolean isLongText = mblog.getBooleanValue("isLongText");
         String bid = mblog.getString("bid");
-        if (isLongText) {
-            return getWeiboLongText(bid);
+        int topFlag = 0;
+        JSONObject title = mblog.getJSONObject("title");
+        if (title != null) {
+            if ("置顶".equals(title.getString("text"))) {
+                topFlag = 1;
+            }
         }
-        return parseToWeiboPost(mblog);
+        WeiboPost weiboPost;
+        if (isLongText) {
+            weiboPost = getWeiboLongText(bid);
+        } else {
+            weiboPost = parseToWeiboPost(mblog);
+        }
+        if (weiboPost != null) {
+            weiboPost.setTopFlag(topFlag);
+        }
+        return weiboPost;
     }
 
     public WeiboPost parseToWeiboPost(JSONObject mblog) {
