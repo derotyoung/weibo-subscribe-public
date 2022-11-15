@@ -46,6 +46,9 @@ public class SearchService {
     @Autowired
     private TelegramBot telegramBot;
 
+    @Autowired
+    private HistoryService historyService;
+
     public void run() {
         List<String> userIds = userSubscribeRepository.getAllUserId(true);
         if (CollectionUtils.isEmpty(userIds)) {
@@ -178,31 +181,7 @@ public class SearchService {
                 ThreadUtil.safeSleep(1000);
             }
         }
-        saveHistory(successList);
-    }
-
-    /**
-     * 保存发送记录
-     */
-    public void saveHistory(List<WeiboPost> weiboPostList) {
-        if (CollectionUtils.isEmpty(weiboPostList)) {
-            return;
-        }
-
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC+08"));
-        List<HistoryPost> postList = new LinkedList<>();
-        for (WeiboPost weiboPost : weiboPostList) {
-            HistoryPost historyPost = new HistoryPost();
-            historyPost.setUserId(weiboPost.getUserId());
-            historyPost.setNickname(weiboPost.getNickname());
-            historyPost.setPostId(weiboPost.getId());
-            historyPost.setTopFlag(weiboPost.getTopFlag());
-            historyPost.setCreatedAt(weiboPost.getCreatedAt());
-            historyPost.setEditAt(weiboPost.getEditAt());
-            historyPost.setCreateTime(now);
-            postList.add(historyPost);
-        }
-        historyPostRepository.saveBatch(postList);
+        historyService.saveHistory(successList);
     }
 
     public WeiboPost getWeiboPost(JSONObject mblog) {
