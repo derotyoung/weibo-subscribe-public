@@ -187,13 +187,7 @@ public class SearchService {
     public WeiboPost getWeiboPost(JSONObject mblog) {
         boolean isLongText = mblog.getBooleanValue("isLongText");
         String bid = mblog.getString("bid");
-        int topFlag = 0;
-        JSONObject title = mblog.getJSONObject("title");
-        if (title != null) {
-            if ("置顶".equals(title.getString("text"))) {
-                topFlag = 1;
-            }
-        }
+        int topFlag = isTopPost(mblog) ? 1 : 0;
         WeiboPost weiboPost;
         if (isLongText) {
             weiboPost = getWeiboLongText(bid);
@@ -204,6 +198,14 @@ public class SearchService {
             weiboPost.setTopFlag(topFlag);
         }
         return weiboPost;
+    }
+
+    public boolean isTopPost(JSONObject mblog) {
+        JSONObject title = mblog.getJSONObject("title");
+        if (title != null) {
+            return "置顶".equals(title.getString("text"));
+        }
+        return false;
     }
 
     public WeiboPost parseToWeiboPost(JSONObject mblog) {
@@ -342,7 +344,7 @@ public class SearchService {
             for (String str : str2List) {
                 String emojiText = ReUtil.getGroup0("\\[+[\\u4e00-\\u9fa5]+\\]", str);
                 if (StringUtils.hasLength(emojiText)) {
-                    text = text.replace(str, emojiText);
+                    text = text.replace(str, ("\\" + emojiText));
                     continue;
                 }
 
