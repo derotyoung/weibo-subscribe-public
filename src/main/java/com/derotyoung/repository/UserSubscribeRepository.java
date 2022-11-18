@@ -1,20 +1,23 @@
 package com.derotyoung.repository;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.derotyoung.entity.UserSubscribe;
 import com.derotyoung.mapper.UserSubscribeMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Repository
-public class UserSubscribeRepository extends ServiceImpl<UserSubscribeMapper, UserSubscribe> {
+@Component
+public class UserSubscribeRepository {
+
+    @Autowired
+    private UserSubscribeMapper userSubscribeMapper;
 
     public List<String> getAllUserId(final boolean opened) {
-        List<UserSubscribe> list = list();
+        List<UserSubscribe> list = userSubscribeMapper.findAll();
         if (CollectionUtils.isEmpty(list)) {
             return Collections.emptyList();
         }

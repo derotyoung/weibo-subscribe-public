@@ -49,19 +49,14 @@ public class WeiboPost {
     private String source;
 
     /**
-     * 图片
-     */
-    private List<String> pics;
-
-    /**
      * 文章链接
      */
     private String link;
 
     /**
-     * 视频链接
+     * 媒体
      */
-    private String videoUrl;
+    private List<Media> mediaList;
 
     /**
      * 创建于

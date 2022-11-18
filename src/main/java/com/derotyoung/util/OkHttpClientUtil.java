@@ -33,7 +33,7 @@ public class OkHttpClientUtil {
         return list.get(getRandomNumberInRange(0, 2));
     }
 
-    private static int getRandomNumberInRange(int min, int max) {
+    public static int getRandomNumberInRange(int min, int max) {
         if (min >= max) {
             throw new IllegalArgumentException("max must be greater than min");
         }
@@ -55,8 +55,8 @@ public class OkHttpClientUtil {
         return builder.build();
     }
 
-    public static String getRequestUrl(String url, Map<String, String> paramsMap) {
-        StringBuilder reqUrl = new StringBuilder(url);
+    public static String getRequestUrl(String baseUrl, Map<String, String> paramsMap) {
+        StringBuilder reqUrl = new StringBuilder(baseUrl);
         if (paramsMap != null && !paramsMap.isEmpty()) {
             StringJoiner stringJoiner = new StringJoiner("&");
             for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
@@ -69,14 +69,10 @@ public class OkHttpClientUtil {
     }
 
     public static String requestGet(String url) throws IOException {
-        Headers.Builder headers = new Headers.Builder();
-        headers.add("Content-Type", "application/json; charset=UTF-8");
-        headers.add("User-Agent", getUserAgent(USER_AGENT));
-        headers.add("Accept", "image/avif,image/webp,*/*");
-
+        Headers headers = weiboHeaders(getHost(url));
         Request request = new Request.Builder()
                 .url(url)
-                .headers(headers.build())
+                .headers(headers)
                 .build();
 
         OkHttpClient client = client(null);
@@ -85,8 +81,9 @@ public class OkHttpClientUtil {
         return Objects.requireNonNull(response.body()).string();
     }
 
-    public static String requestGet(String url, Map<String, String> paramsMap) throws IOException {
-        return requestGet(getRequestUrl(url, paramsMap));
+    public static String requestGetWithSleep(String url) throws IOException {
+        getRandomNumberInRange(500, 1500);
+        return requestGet(url);
     }
 
     public static int requestGet(String url, String proxy) throws IOException {
@@ -103,6 +100,65 @@ public class OkHttpClientUtil {
         Response response = client.newCall(request).execute();
 
         return Objects.requireNonNull(response).code();
+    }
+
+    public static Response request(String url) throws IOException {
+        Headers.Builder headers = new Headers.Builder();
+        headers.add("Content-Type", "application/json; charset=UTF-8");
+        String host = getHost(url);
+        if (StringUtils.hasLength(host)) {
+            headers.add("Host", host);
+        }
+        headers.add("User-Agent", FIREFOX_USER_AGENT);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .headers(headers.build())
+                .build();
+
+        OkHttpClient client = client(null);
+        return client.newCall(request).execute();
+    }
+
+    private static String getHost(String url) {
+        String baseDomain = null;
+        if (StringUtils.hasText(url)) {
+            final int schemeIdx = url.indexOf("://");
+            if (schemeIdx > 0) {
+                String text = url.substring(schemeIdx + 3);
+                final int spIdx = text.indexOf("/");
+                if (spIdx > 0) {
+                    baseDomain = text.substring(0, spIdx);
+                } else {
+                    final int spIdx2 = text.indexOf("?");
+                    if (spIdx2 > 0) {
+                        baseDomain = text.substring(0, spIdx2);
+                    } else {
+                        baseDomain = text;
+                    }
+                }
+            }
+        }
+        return baseDomain;
+    }
+
+    public static Headers weiboHeaders(String host) {
+        Headers.Builder headers = new Headers.Builder();
+        headers.add("Content-Type", "application/json; charset=UTF-8");
+        headers.add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
+        // headers.add("Accept-Encoding", "gzip, deflate, br");
+        headers.add("Accept-Language", "en-US,zh-CN;q=0.5");
+        headers.add("Connection", "keep-alive");
+        if (StringUtils.hasLength(host)) {
+            headers.add("Host", host);
+        }
+        headers.add("Sec-Fetch-Dest", "document");
+        headers.add("Sec-Fetch-Mode", "navigate");
+        headers.add("Sec-Fetch-Site", "none");
+        headers.add("Sec-Fetch-User", "?1");
+        headers.add("Upgrade-Insecure-Requests", "1");
+        headers.add("User-Agent", getUserAgent(USER_AGENT));
+        return headers.build();
     }
 
 }

@@ -2,15 +2,15 @@
 ![](https://img.shields.io/badge/%E6%8F%90%E7%A4%BA-%E7%94%B5%E6%8A%A5%E5%8A%9F%E8%83%BD%E9%9C%80%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91-informational)
 
 ## 实现了什么功能？
-订阅某个博主的微博，如果博主有发新微博、编辑、转发微博等动态，则及时将微博最新动态发送到指定的Telegram频道。
+订阅某个博主的微博，如果博主有发新微博、编辑、转发微博等动态，则及时将微博最新动态发送到指定的Telegram频道，支持图片和视频备份到Telegram。
 
 ## 实现该功能的初衷
 觉得有些博主的文章质量比较高，想要不错过这些博主的微博，又不是一直刷微博，把想看的微博推送到自己的消息渠道。本来之前有好几个小程序/公众号可以订阅微博，后面都不断关闭该功能，于是考虑用Telegram作为信息渠道。
 
 **⚠️请注意：**
-1. 微博博文中的表情包会被过滤掉
+1. 微博博文中的表情包会被过替换为文字
 2. `粉丝可见`、`好友可见`、`分组可见`、`仅自己可见`等`非公开微博`无法被获取到
-3. 以推送文字为主，不做额外离线存储，图片/视频引用微博链接，可能出现图片无法访问
+3. 推送到Telegram的图片最大5MB，视频最大20MB，超过限制会被压缩
 
 
 ## 效果预览
@@ -33,6 +33,7 @@ cd weibo-subscribe-public
    * `user_subscribe` 微博用户配置表，参考阅读[如何获取微博数字ID](#b5)
    * `history_post` 微博推送记录表
 2. 在表`user_subscribe`配置需要订阅的微博用户，可在运行过程中添加订阅，👇示例：<br>![用户配置示例](docs/user_subscribe_preview.png)<br>
+   只说明必填字段，其他字段为非必填，含义见注释或者顾名思义即可<br>
    `user_id`    -- 微博用户ID<br>
    `open_flag`  -- 是否开启订阅(1=开启,0=关闭)，便于随时停止订阅
 3. 修改配置文件[application.yml](src/main/resources/application.yml)，参考阅读[如何创建bot & 获取token](#b3) <br>
@@ -44,11 +45,11 @@ cd weibo-subscribe-public
 |✅| spring.database.password |                               数据库密码 |                   123456 |
 |✅| weibo.subscribe.telegramChatId |               在Telegram申请的bot token | 886947303:AAFGhtD3s5KDJ… |
 |✅| weibo.subscribe.telegramBotToken |                    在Telegram创建的频道ID |           -1003769903788 |
-|×| weibo.subscribe.cyclePeriod | 定时执行周期，单位：分钟，系统默认为3(要么注释此项，否则一定要填值) |                        3 |
+|×| weibo.subscribe.cyclePeriod | 定时执行周期，单位：秒，系统默认为30(要么注释此项，否则一定要填值) |                        3 |
 |×| weibo.subscribe.proxy |   http代理，无法连接至Telegram服务器时配置，否则不要配置 |    http://127.0.0.1:7890 |
 
 ## <h2 id="f3">使用</h2>
-   上述步骤完成后，使用IDEA(或其他IDE)启动SpringBoot项目。启动后默认每3分钟执行一次，经过实测，在订阅用户为10个设置3分钟IP不会被封，如需设置其他时间自行考虑。
+   上述步骤完成后，使用IDEA(或其他IDE)启动SpringBoot项目，启动后默认每30秒执行一次查询。
    或者自行部署到服务器。
 
 

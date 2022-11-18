@@ -4,8 +4,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 @ConfigurationProperties(prefix = "weibo.subscribe")
 public class WeiboSubscribeProperties {
+
+    private static final long MIN_CYCLE_PERIOD = SECONDS.toSeconds(10);
+
+    public WeiboSubscribeProperties() {
+        validate();
+    }
+
+    public void validate() {
+        if (cyclePeriod < MIN_CYCLE_PERIOD) {
+            cyclePeriod = MIN_CYCLE_PERIOD;
+        }
+    }
 
     /**
      * 在Telegram创建的频道的ID
@@ -18,9 +32,9 @@ public class WeiboSubscribeProperties {
     private String telegramBotToken;
 
     /**
-     * 定时循环执行，单位：分钟，默认3分钟
+     * 定时循环执行，单位：秒，默认30s
      */
-    private long cyclePeriod = 3;
+    private long cyclePeriod = 30;
 
     /**
      * 微博数字ID，多个微博ID用英文逗号隔开

@@ -1,18 +1,27 @@
 package com.derotyoung.weibosubscribe;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.derotyoung.properties.WeiboSubscribeProperties;
 import com.derotyoung.service.SearchService;
+import com.derotyoung.util.FileUtil;
 import com.derotyoung.util.OkHttpClientUtil;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.InputMedia;
+import com.pengrad.telegrambot.model.request.InputMediaPhoto;
+import com.pengrad.telegrambot.model.request.InputMediaVideo;
 import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendMediaGroup;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 

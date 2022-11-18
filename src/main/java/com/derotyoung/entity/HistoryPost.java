@@ -1,17 +1,19 @@
 package com.derotyoung.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "history_post")
 public class HistoryPost {
 
-    @TableId(type = IdType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
