@@ -5,7 +5,7 @@ import com.derotyoung.enums.MediaTypeEnum;
 public class MediaPhoto extends Media {
 
     public MediaPhoto(String media) {
-        super(MediaTypeEnum.PHOTO.getValue(), media);
+        super(MediaTypeEnum.PHOTO.value(), media);
     }
 
     public MediaPhoto(String media, String thumb) {

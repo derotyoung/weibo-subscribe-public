@@ -14,19 +14,21 @@ import java.util.concurrent.TimeUnit;
 
 public class OkHttpClientUtil {
 
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:%s.0) Gecko/20100101 Firefox/%s.0";
+    public static final int FIREFOX_LATEST_VERSION = 107;
 
-    public static final String FIREFOX_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0";
+    public static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:%s.0) Gecko/20100101 Firefox/%s.0";
 
-    public static final String EDGE_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.35";
+    public static final String FIREFOX_USER_AGENT = String.format(DEFAULT_USER_AGENT, FIREFOX_LATEST_VERSION, FIREFOX_LATEST_VERSION);
 
     public static final String CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36";
+
+    public static final String EDGE_USER_AGENT = CHROME_USER_AGENT + " Edg/107.0.1418.35";
 
     private OkHttpClientUtil() {
     }
 
     public static String getUserAgent(String model) {
-        int number = getRandomNumberInRange(99, 106);
+        int number = getRandomNumberInRange(FIREFOX_LATEST_VERSION - 5, FIREFOX_LATEST_VERSION);
         String firefoxUserAgent = String.format(model, number, number);
 
         List<String> list = List.of(firefoxUserAgent, EDGE_USER_AGENT, CHROME_USER_AGENT);
@@ -157,7 +159,7 @@ public class OkHttpClientUtil {
         headers.add("Sec-Fetch-Site", "none");
         headers.add("Sec-Fetch-User", "?1");
         headers.add("Upgrade-Insecure-Requests", "1");
-        headers.add("User-Agent", getUserAgent(USER_AGENT));
+        headers.add("User-Agent", getUserAgent(DEFAULT_USER_AGENT));
         return headers.build();
     }
 

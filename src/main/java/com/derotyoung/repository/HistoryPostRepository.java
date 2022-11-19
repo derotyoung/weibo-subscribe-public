@@ -2,7 +2,6 @@ package com.derotyoung.repository;
 
 import com.derotyoung.entity.HistoryPost;
 import com.derotyoung.mapper.HistoryPostMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -15,11 +14,20 @@ import java.util.stream.Collectors;
 @Component
 public class HistoryPostRepository {
 
-    @Autowired
-    private HistoryPostMapper historyPostMapper;
+    private final HistoryPostMapper historyPostMapper;
+
+    public HistoryPostRepository(HistoryPostMapper historyPostMapper) {
+        this.historyPostMapper = historyPostMapper;
+    }
 
     public List<HistoryPost> list() {
         return Optional.of(historyPostMapper.findAll()).orElse(Collections.emptyList());
+    }
+
+    public List<HistoryPost> list(final Integer topFlag) {
+        return Optional.of(historyPostMapper.findAll(
+                (root, query, builder) -> builder.equal(root.get("topFlag").as(Integer.class), topFlag)))
+                .orElse(Collections.emptyList());
     }
 
     public void saveBatch(List<HistoryPost> list) {
@@ -37,7 +45,8 @@ public class HistoryPostRepository {
     }
 
     public Map<String, List<HistoryPost>> getPostMapByUserId(String userId) {
-        List<HistoryPost> list = historyPostMapper.findAllByUserId(userId);
+        List<HistoryPost> list = historyPostMapper.findAll(
+                (root, query, builder) -> builder.equal(root.get("userId").as(String.class), userId));
         if (CollectionUtils.isEmpty(list)) {
             return Collections.emptyMap();
         }

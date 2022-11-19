@@ -1,27 +1,18 @@
 package com.derotyoung.weibosubscribe;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.derotyoung.properties.WeiboSubscribeProperties;
-import com.derotyoung.service.SearchService;
-import com.derotyoung.util.FileUtil;
+import com.derotyoung.config.WeiboSubscribe;
+import com.derotyoung.service.PostService;
 import com.derotyoung.util.OkHttpClientUtil;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.request.InputMedia;
-import com.pengrad.telegrambot.model.request.InputMediaPhoto;
-import com.pengrad.telegrambot.model.request.InputMediaVideo;
 import com.pengrad.telegrambot.model.request.ParseMode;
-import com.pengrad.telegrambot.request.SendMediaGroup;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -29,32 +20,32 @@ import java.time.ZoneId;
 public class WeiboSubscribeApplicationTests {
 
     @Autowired
-    private SearchService searchService;
+    private PostService postService;
 
     @Autowired
-    private WeiboSubscribeProperties weiboSubscribeProperties;
+    private WeiboSubscribe weiboSubscribe;
 
     @Test
     void testSearch() {
-        searchService.run();
+        postService.run();
     }
 
     // @Test
-    void testUserId() {
-        searchService.testWeiboUserId();
+    void testWeiboId() {
+        postService.testWeiboUserId();
     }
 
     // @Test
     void testProxy() {
-        searchService.testProxy();
+        postService.testProxy();
     }
 
     // @Test
     void testBot() {
         // Create your bot passing the token received from @BotFather
-        String botToken = weiboSubscribeProperties.getTelegramBotToken();
-        String chatId = weiboSubscribeProperties.getTelegramChatId();
-        String proxy = weiboSubscribeProperties.getProxy();
+        String botToken = weiboSubscribe.getTelegramBotToken();
+        String chatId = weiboSubscribe.getTelegramChatId();
+        String proxy = weiboSubscribe.getProxy();
 
         OkHttpClient client = OkHttpClientUtil.client(proxy);
 

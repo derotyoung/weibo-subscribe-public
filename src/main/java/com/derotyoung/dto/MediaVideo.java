@@ -5,7 +5,7 @@ import com.derotyoung.enums.MediaTypeEnum;
 public class MediaVideo extends Media {
 
     public MediaVideo(String media) {
-        super(MediaTypeEnum.VIDEO.getValue(), media);
+        super(MediaTypeEnum.VIDEO.value(), media);
     }
 
     private Integer width;

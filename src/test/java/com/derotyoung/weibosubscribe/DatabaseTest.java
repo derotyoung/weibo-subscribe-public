@@ -16,7 +16,8 @@ public class DatabaseTest {
 
     @Test
     void testQuery() {
-        List<HistoryPost> list = historyPostMapper.findAllByUserId("1");
+        List<HistoryPost> list = historyPostMapper.findAll(
+                (root, query, builder) -> builder.equal(root.get("userId").as(String.class), "1"));
     }
 
     @Test

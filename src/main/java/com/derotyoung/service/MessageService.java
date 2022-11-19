@@ -1,9 +1,9 @@
 package com.derotyoung.service;
 
+import com.derotyoung.config.WeiboSubscribe;
 import com.derotyoung.dto.Media;
 import com.derotyoung.dto.WeiboPost;
 import com.derotyoung.enums.MediaTypeEnum;
-import com.derotyoung.properties.WeiboSubscribeProperties;
 import com.derotyoung.util.FileUtil;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InputMedia;
@@ -32,7 +32,7 @@ public class MessageService {
     private final static Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     @Resource
-    private WeiboSubscribeProperties weiboSubscribeProperties;
+    private WeiboSubscribe weiboSubscribe;
 
     @Resource
     private TelegramBot telegramBot;
@@ -41,7 +41,7 @@ public class MessageService {
     private HistoryService historyService;
 
     public void sendMessageBatch(List<WeiboPost> weiboPostList) {
-        String chatId = weiboSubscribeProperties.getTelegramChatId();
+        String chatId = weiboSubscribe.getTelegramChatId();
 
         if (CollectionUtils.isEmpty(weiboPostList)) {
             return;
@@ -83,16 +83,16 @@ public class MessageService {
                 SendMessage sendMessage = new SendMessage(chatId, message);
                 sendMessage.parseMode(ParseMode.Markdown);
                 sendMessage.disableWebPagePreview(true);
-                execute(successList, weiboPost, sendMessage);
+                execute(chatId, sendMessage, successList, weiboPost);
             } else {
                 List<Media> mediaList = weiboPost.getMediaList();
                 InputMedia<?>[] arr = new InputMedia<?>[mediaList.size()];
                 for (int i = 0; i < mediaList.size(); i++) {
                     Media media = mediaList.get(i);
                     InputMedia<?> inputMedia = null;
-                    if (MediaTypeEnum.PHOTO.getValue().equals(media.getType())) {
+                    if (MediaTypeEnum.PHOTO.value().equals(media.getType())) {
                         inputMedia = new InputMediaPhoto(media.getMedia());
-                    } else if (MediaTypeEnum.VIDEO.getValue().equals(media.getType())) {
+                    } else if (MediaTypeEnum.VIDEO.value().equals(media.getType())) {
                         inputMedia = new InputMediaVideo(media.getMedia());
                     }
                     assert inputMedia != null;
@@ -107,19 +107,36 @@ public class MessageService {
                     arr[i] = inputMedia;
                 }
                 SendMediaGroup sendMediaGroup = new SendMediaGroup(chatId, arr);
-                execute(successList, weiboPost, sendMediaGroup);
+                execute(chatId, sendMediaGroup, successList, weiboPost);
             }
         }
         historyService.saveHistory(successList);
     }
 
-    private <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(List<WeiboPost> successList,
-                                                                               WeiboPost weiboPost,
-                                                                               BaseRequest<T, R> request) {
+    private <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(String chatId, BaseRequest<T, R> request,
+                                                                               List<WeiboPost> successList,
+                                                                               WeiboPost weiboPost) {
         try {
             R response = telegramBot.execute(request);
             if (response.isOk()) {
                 successList.add(weiboPost);
+            } else if (response.errorCode() == 400
+                    && "Bad Request: failed to send message #1 with the error message \"Wrong file identifier/HTTP URL specified\"".equals(response.description())) {
+                StringBuilder sb = new StringBuilder(weiboPost.getText());
+                for (int i = 0; i < weiboPost.getMediaList().size(); i++) {
+                    Media media = weiboPost.getMediaList().get(i);
+                    sb.append("[");
+                    sb.append(MediaTypeEnum.desc(media.getType())).append(i + 1);
+                    sb.append("](");
+                    sb.append(media.getMedia());
+                    sb.append(")");
+                    sb.append(" ");
+                }
+                sb.append("\n\n");
+                SendMessage sendMessage = new SendMessage(chatId, sb.toString());
+                sendMessage.parseMode(ParseMode.Markdown);
+                sendMessage.disableWebPagePreview(true);
+                execute(chatId, sendMessage, successList, weiboPost);
             } else {
                 logger.error("发送TelegramBot错误,response={},message={}", response, weiboPost.getText());
             }

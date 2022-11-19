@@ -2,7 +2,6 @@ package com.derotyoung.repository;
 
 import com.derotyoung.entity.UserSubscribe;
 import com.derotyoung.mapper.UserSubscribeMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -13,8 +12,11 @@ import java.util.stream.Collectors;
 @Component
 public class UserSubscribeRepository {
 
-    @Autowired
-    private UserSubscribeMapper userSubscribeMapper;
+    private final UserSubscribeMapper userSubscribeMapper;
+
+    public UserSubscribeRepository(UserSubscribeMapper userSubscribeMapper) {
+        this.userSubscribeMapper = userSubscribeMapper;
+    }
 
     public List<String> getAllUserId(final boolean opened) {
         List<UserSubscribe> list = userSubscribeMapper.findAll();

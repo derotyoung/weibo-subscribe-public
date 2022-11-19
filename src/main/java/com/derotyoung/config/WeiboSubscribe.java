@@ -1,17 +1,17 @@
-package com.derotyoung.properties;
+package com.derotyoung.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.util.List;
+import org.springframework.context.annotation.Configuration;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+@Configuration
 @ConfigurationProperties(prefix = "weibo.subscribe")
-public class WeiboSubscribeProperties {
+public class WeiboSubscribe {
 
     private static final long MIN_CYCLE_PERIOD = SECONDS.toSeconds(10);
 
-    public WeiboSubscribeProperties() {
+    public WeiboSubscribe() {
         validate();
     }
 
@@ -37,15 +37,8 @@ public class WeiboSubscribeProperties {
     private long cyclePeriod = 30;
 
     /**
-     * 微博数字ID，多个微博ID用英文逗号隔开
-     * 注意：请尽量不要设置过多的微博ID，避免被新浪微博识别为恶意爬虫，被拉黑IP
-     * 欢迎在大家在issues中交流大家的 订阅数量 以及 访问频次
-     */
-    private List<String> userIds;
-
-    /**
      * 在中国大陆境内给Telegram发送消息需要科学上网
-     * 本脚本支持http代理，请正确配置ip以及端口
+     * 本脚本只支持http代理，请正确配置ip以及端口
      * 如果在非中国大陆境内使用，请留空
      * http代理格式为:<a href="http://127.0.0.1:7890">...</a>
      */
@@ -73,14 +66,6 @@ public class WeiboSubscribeProperties {
 
     public void setCyclePeriod(long cyclePeriod) {
         this.cyclePeriod = cyclePeriod;
-    }
-
-    public List<String> getUserIds() {
-        return userIds;
-    }
-
-    public void setUserIds(List<String> userIds) {
-        this.userIds = userIds;
     }
 
     public String getProxy() {
