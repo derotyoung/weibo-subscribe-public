@@ -156,6 +156,7 @@ public class MessageService {
             return null;
         }
         return str.replace("_", "\\_")
-                .replace("&gt;", ">");
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"");
     }
 }
