@@ -40,7 +40,9 @@ public final class PostUtil {
     }
 
     public static JSONArray getUserIndex(String userId) {
-        String url = OkHttpClientUtil.getRequestUrl(USER_INDEX_URL, Map.of("containerid", ("107603" + userId)));
+        Map<String, String> paramsMap = Map.of("containerid", ("107603" + userId),
+                "uid", userId, "type", "uid", "value", userId);
+        String url = OkHttpClientUtil.getRequestUrl(USER_INDEX_URL, paramsMap);
         String response;
         try {
             response = OkHttpClientUtil.requestGetWithSleep(url);
@@ -226,7 +228,7 @@ public final class PostUtil {
             for (String str : strList2) {
                 String link = parseUrlLink(str);
                 if (StringUtils.hasLength(link)) {
-                    String name1 = ReUtil.getGroup0("#+[\\u4e00-\\u9fa5]+#", str);
+                    String name1 = ReUtil.getGroup0("#.*?#", str);
                     if (StringUtils.hasLength(name1)) {
                         String replacement = "[" + name1 + "](" + link + ")";
                         text = text.replace(str, replacement + " ");
