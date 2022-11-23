@@ -17,6 +17,11 @@ public class HistoryPost {
     private Long id;
 
     /**
+     * telegram message_id
+     */
+    private Integer messageId;
+
+    /**
      * 用户ID
      */
     private String userId;

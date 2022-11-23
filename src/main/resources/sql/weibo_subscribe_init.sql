@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `user_subscribe` (
 -- DROP TABLE IF EXISTS `history_post`;
 CREATE TABLE IF NOT EXISTS `history_post` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `message_id` int(11) DEFAULT NULL COMMENT 'telegram message_id',
     `user_id` VARCHAR(32) DEFAULT NULL COMMENT '用户ID',
     `nickname` VARCHAR(32) DEFAULT NULL COMMENT '用户名',
     `post_id` VARCHAR(32) DEFAULT NULL COMMENT '文章ID',

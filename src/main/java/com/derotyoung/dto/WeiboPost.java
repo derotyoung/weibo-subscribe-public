@@ -67,4 +67,9 @@ public class WeiboPost {
      * 编辑于
      */
     private LocalDateTime editAt;
+
+    /**
+     * telegram message_id
+     */
+    private Integer messageId;
 }

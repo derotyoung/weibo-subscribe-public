@@ -6,6 +6,7 @@ import com.derotyoung.dto.WeiboPost;
 import com.derotyoung.enums.MediaTypeEnum;
 import com.derotyoung.util.FileUtil;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.request.InputMedia;
 import com.pengrad.telegrambot.model.request.InputMediaPhoto;
 import com.pengrad.telegrambot.model.request.InputMediaVideo;
@@ -14,6 +15,7 @@ import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMediaGroup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
+import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,10 @@ public class MessageService {
 
     @Resource
     private HistoryService historyService;
+
+    private final List<String> CODE400_MESSAGE = List.of(
+            "Bad Request: failed to send message #1 with the error message \"Wrong file identifier/HTTP URL specified\"",
+            "Bad Request: failed to send message #1 with the error message \"Failed to get HTTP URL content\"");
 
     public void sendMessageBatch(List<WeiboPost> weiboPostList) {
         String chatId = weiboSubscribe.getTelegramChatId();
@@ -119,9 +125,14 @@ public class MessageService {
         try {
             R response = telegramBot.execute(request);
             if (response.isOk()) {
+                if (response instanceof SendResponse) {
+                    Message message = ((SendResponse) response).message();
+                    if (message != null) {
+                        weiboPost.setMessageId(message.messageId());
+                    }
+                }
                 successList.add(weiboPost);
-            } else if (response.errorCode() == 400
-                    && "Bad Request: failed to send message #1 with the error message \"Wrong file identifier/HTTP URL specified\"".equals(response.description())) {
+            } else if (response.errorCode() == 400 && CODE400_MESSAGE.contains(response.description())) {
                 StringBuilder sb = new StringBuilder(weiboPost.getText());
                 for (int i = 0; i < weiboPost.getMediaList().size(); i++) {
                     Media media = weiboPost.getMediaList().get(i);

@@ -45,6 +45,7 @@ public class HistoryService {
         List<HistoryPost> postList = new LinkedList<>();
         for (WeiboPost weiboPost : weiboPostList) {
             HistoryPost historyPost = new HistoryPost();
+            historyPost.setMessageId(weiboPost.getMessageId());
             historyPost.setUserId(weiboPost.getUserId());
             historyPost.setNickname(weiboPost.getNickname());
             historyPost.setPostId(weiboPost.getId());

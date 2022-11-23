@@ -32,6 +32,8 @@ public final class PostUtil {
 
     private static final String LONG_TEXT_URL = "https://m.weibo.cn/statuses/show";
 
+    private static final List<String> ERROR_IDS = new ArrayList<>(64);
+
     private PostUtil() {
     }
 
@@ -182,7 +184,11 @@ public final class PostUtil {
         }
         // 无法查看的微博
         if (strIsNotJson(reqBody)) {
-            logger.warn("您所访问的内容因版权问题不适合展示,postId={},url={}", mblog.getString("id"), url);
+            String id = mblog.getString("id");
+            if (!ERROR_IDS.contains(id)) {
+                logger.warn("您所访问的内容因版权问题不适合展示,postId={},url={}", mblog.getString("id"), url);
+                ERROR_IDS.add(id);
+            }
             return null;
         }
         JSONObject detail = JSON.parseObject(reqBody);
