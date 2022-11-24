@@ -70,7 +70,7 @@ public class MessageService {
                 sb.append(escapeSymbol(createdAtShow));
             }
 
-            sb.append(" 来自 ").append(weiboPost.getSource());
+            sb.append(" 来自 ").append(escapeSymbol(weiboPost.getSource()));
 
             LocalDateTime editAt = weiboPost.getEditAt();
             if (editAt != null) {
@@ -195,7 +195,9 @@ public class MessageService {
         if (str == null) {
             return null;
         }
-        return str.replace("_", "\\_")
+        return str.replace(".", "\\.")
+                .replace("#", "\\#")
+                .replace("_", "\\_")
                 .replace("-", "\\-")
                 .replace("&gt;", ">")
                 .replace("&quot;", "\"");
