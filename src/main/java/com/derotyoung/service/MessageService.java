@@ -195,10 +195,22 @@ public class MessageService {
         if (str == null) {
             return null;
         }
-        return str.replace(".", "\\.")
-                .replace("#", "\\#")
+        // In all other places characters
+        // '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'
+        // must be escaped with the preceding character '\'.
+        return str
                 .replace("_", "\\_")
+                .replace("*", "\\*")
+                .replace("~", "\\~")
+                .replace("`", "\\`")
+                .replace(">", "\\>")
+                .replace("#", "\\#")
+                .replace("+", "\\+")
                 .replace("-", "\\-")
+                .replace("=", "\\=")
+                .replace("|", "\\|")
+                .replace(".", "\\.")
+
                 .replace("&gt;", ">")
                 .replace("&quot;", "\"");
     }
