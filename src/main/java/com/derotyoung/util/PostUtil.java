@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public final class PostUtil {
@@ -32,9 +33,21 @@ public final class PostUtil {
 
     private static final String LONG_TEXT_URL = "https://m.weibo.cn/statuses/show";
 
-    private static final List<String> ERROR_IDS = new ArrayList<>(64);
+    private static final Map<String, Integer> ERROR_IDS = new ConcurrentHashMap<>(32);
 
     private PostUtil() {
+    }
+
+    public static void putErrorId(String id) {
+        ERROR_IDS.merge(id, 1, Integer::sum);
+    }
+
+    public static int countErrorId(String id) {
+        Integer count = ERROR_IDS.get(id);
+        if (count != null) {
+            return count;
+        }
+        return -1;
     }
 
     public static String getPcPostUrl(String userId, String bid) {
@@ -185,9 +198,9 @@ public final class PostUtil {
         // 无法查看的微博
         if (strIsNotJson(reqBody)) {
             String id = mblog.getString("id");
-            if (!ERROR_IDS.contains(id)) {
+            if (PostUtil.countErrorId(id) < 3) {
                 logger.warn("您所访问的内容因版权问题不适合展示,postId={},url={}", mblog.getString("id"), url);
-                ERROR_IDS.add(id);
+                PostUtil.putErrorId(id);
             }
             return null;
         }
@@ -255,7 +268,7 @@ public final class PostUtil {
             for (String str : str3List) {
                 String emojiText = ReUtil.getGroup0("\\[+[\\u4e00-\\u9fa5]+\\]", str);
                 if (StringUtils.hasLength(emojiText)) {
-                    text = text.replace(str, ("\\" + emojiText));
+                    text = text.replace(str, escapeEmojiText(emojiText));
                     continue;
                 }
 
@@ -283,7 +296,7 @@ public final class PostUtil {
                 List<String> list = ReUtil.findAllGroup0("[\\u4e00-\\u9fa5]", str);
                 if (!CollectionUtils.isEmpty(list)) {
                     String join = String.join("", list);
-                    replacement = "\\[" + join + "]";
+                    replacement = "\\[" + join + "\\]";
                 }
                 text = text.replace(str, replacement);
             }
@@ -358,5 +371,19 @@ public final class PostUtil {
 
     public static boolean strIsNotJson(String str) {
         return !strIsJson(str);
+    }
+
+    /**
+     * 转义表情为文本
+     *
+     * @param emojiText String 如：[坏笑]
+     * @return String
+     */
+    private static String escapeEmojiText(String emojiText) {
+        if (emojiText == null) {
+            return null;
+        }
+        return emojiText.replace("[", "\\[")
+                .replace("]", "\\]");
     }
 }

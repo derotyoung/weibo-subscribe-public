@@ -3,9 +3,9 @@ package com.derotyoung.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.derotyoung.config.WeiboSubscribe;
 import com.derotyoung.dto.WeiboPost;
 import com.derotyoung.entity.HistoryPost;
-import com.derotyoung.config.WeiboSubscribe;
 import com.derotyoung.repository.HistoryPostRepository;
 import com.derotyoung.repository.UserSubscribeRepository;
 import com.derotyoung.util.OkHttpClientUtil;
@@ -59,6 +59,11 @@ public class PostService {
                 JSONObject card = cards.getJSONObject(i);
                 JSONObject mblog = card.getJSONObject("mblog");
                 String id = mblog.getString("id");
+
+                // 错误文章发送失败3次后不再发送
+                if (PostUtil.countErrorId(id) >= 3) {
+                    continue;
+                }
 
                 // 文章已发送不再发送
                 List<HistoryPost> historyPosts = postMap.get(id);
@@ -128,4 +133,3 @@ public class PostService {
     }
 
 }
-
