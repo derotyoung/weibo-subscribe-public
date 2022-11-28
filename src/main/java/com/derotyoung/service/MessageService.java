@@ -192,8 +192,6 @@ public class MessageService {
         return str
                 .replace("_", "\\_")
                 .replace("*", "\\*")
-                .replace("(", "\\(")
-                .replace(")", "\\)")
                 .replace("~", "\\~")
                 .replace("`", "\\`")
                 // .replace(">", "\\>")
