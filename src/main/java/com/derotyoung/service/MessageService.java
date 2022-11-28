@@ -25,10 +25,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class MessageService {
@@ -44,7 +41,7 @@ public class MessageService {
     @Resource
     private HistoryService historyService;
 
-    private final List<String> CODE400_MESSAGE = List.of(
+    private final Set<String> CODE400_MESSAGE = Set.of(
             "Bad Request: failed to send message #1 with the error message \"Wrong file identifier/HTTP URL specified\"",
             "Bad Request: failed to send message #1 with the error message \"Failed to get HTTP URL content\"",
             "Bad Request: too many messages to send as an album");
@@ -153,17 +150,11 @@ public class MessageService {
         List<InputMedia<?>> inputMediaList = new ArrayList<>(mediaList.size());
         for (int i = 0; i < mediaList.size(); i++) {
             Media media = mediaList.get(i);
-            byte[] mediaBytes = FileUtil.getBytes(media.getMedia());
-            if (mediaBytes == null) {
-                logger.warn("媒体文件下载失败,id={},url={}", weiboPost.getId(), media.getMedia());
-                continue;
-            }
-
             InputMedia<?> inputMedia = null;
             if (MediaTypeEnum.PHOTO.value().equals(media.getType())) {
-                inputMedia = new InputMediaPhoto(mediaBytes);
+                inputMedia = new InputMediaPhoto(media.getMedia());
             } else if (MediaTypeEnum.VIDEO.value().equals(media.getType())) {
-                inputMedia = new InputMediaVideo(mediaBytes);
+                inputMedia = new InputMediaVideo(media.getMedia());
             }
             assert inputMedia != null;
             byte[] thumbBytes = FileUtil.getBytes(media.getThumb());
@@ -201,17 +192,23 @@ public class MessageService {
         return str
                 .replace("_", "\\_")
                 .replace("*", "\\*")
+                .replace("(", "\\(")
+                .replace(")", "\\)")
                 .replace("~", "\\~")
                 .replace("`", "\\`")
-                .replace(">", "\\>")
+                // .replace(">", "\\>")
                 .replace("#", "\\#")
                 .replace("+", "\\+")
                 .replace("-", "\\-")
                 .replace("=", "\\=")
                 .replace("|", "\\|")
+                .replace("{", "\\{")
+                .replace("}", "\\}")
                 .replace(".", "\\.")
+                .replace("!", "\\!")
 
-                .replace("&gt;", ">")
+                .replace("&lt;", "<")
+                .replace("&gt;", "\\>")
                 .replace("&quot;", "\"");
     }
 }
