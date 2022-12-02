@@ -57,7 +57,14 @@ public class PostService {
                     break;
                 }
                 JSONObject card = cards.getJSONObject(i);
+                if (card == null) {
+                    continue;
+                }
                 JSONObject mblog = card.getJSONObject("mblog");
+                if (mblog == null) {
+                    logger.warn("userId={},desc={}", userId, card.getString("desc"));
+                    continue;
+                }
                 String id = mblog.getString("id");
 
                 // 错误文章发送失败3次后不再发送

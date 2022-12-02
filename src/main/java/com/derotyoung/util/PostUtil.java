@@ -215,6 +215,7 @@ public final class PostUtil {
         }
 
         text = text.replace("<br />", "\n");
+        text = escapeText(text);
 
         List<String> strList1 = regexFindAll("<a href.*?</a>", text);
         if (!CollectionUtils.isEmpty(strList1)) {
@@ -280,6 +281,8 @@ public final class PostUtil {
     }
 
     public static String beautifyRetweetText(String text) {
+        text = escapeText(text);
+
         List<String> strList1 = regexFindAll("<a href.*?</a>", text);
         if (!CollectionUtils.isEmpty(strList1)) {
             for (String str : strList1) {
@@ -385,5 +388,19 @@ public final class PostUtil {
         }
         return emojiText.replace("[", "\\[")
                 .replace("]", "\\]");
+    }
+
+    /**
+     * 转义文本中的特殊字符
+     *
+     * @param text String 如：(dhg)
+     * @return String
+     */
+    private static String escapeText(String text) {
+        if (text == null) {
+            return null;
+        }
+        return text.replace("(", "\\(")
+                .replace(")", "\\)");
     }
 }
